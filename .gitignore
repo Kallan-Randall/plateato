@@ -1,0 +1,8 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Each package manages its own ignores (see mobile/.gitignore)
