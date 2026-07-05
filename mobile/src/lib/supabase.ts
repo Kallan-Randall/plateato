@@ -17,7 +17,7 @@ if (!supabaseUrl || !supabaseKey) {
 /**
  * Web uses localStorage, but it must be guarded: Expo Router renders web pages
  * on a Node server first (no `window`), so unguarded access crashes there.
- * On native we use AsyncStorage, which has no such issue.
+ * Native uses AsyncStorage and is unaffected.
  */
 const webStorage: SupportedStorage = {
   getItem: (key) =>
@@ -33,7 +33,7 @@ const webStorage: SupportedStorage = {
 };
 
 /**
- * The app's single Supabase client. Import this anywhere we talk to the backend.
+ * The app's single Supabase client. Import it wherever the app talks to the backend.
  */
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {

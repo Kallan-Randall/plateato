@@ -26,7 +26,7 @@ export default function SignInScreen() {
     if (result.error) {
       setError(result.error.message);
     }
-    // On success, the auth listener in AuthProvider flips the gate for us.
+    // On success, the auth listener in AuthProvider updates the route.
     setLoading(false);
   };
 

@@ -15,7 +15,7 @@ type AuthState = {
   session: Session | null;
   /** Whether the signed-in user belongs to at least one household. */
   hasHousehold: boolean;
-  /** True while we're still resolving the initial session + household. */
+  /** True while the initial session and household state are still resolving. */
   isLoading: boolean;
   /** Re-check household membership (call after creating/joining one). */
   refreshHousehold: () => Promise<void>;
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [hasHousehold, setHasHousehold] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Does this user belong to any household? (a lightweight count query)
+  // Whether this user belongs to any household (a lightweight count query).
   const loadHousehold = useCallback(async (current: Session | null) => {
     if (!current?.user) {
       setHasHousehold(false);
@@ -55,7 +55,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   useEffect(() => {
     let active = true;
 
-    // 1. Resolve the session we already have (if any) on startup.
+    // Resolve any existing session on startup.
     supabase.auth.getSession().then(async ({ data }) => {
       if (!active) return;
       setSession(data.session);
@@ -63,13 +63,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
       setIsLoading(false);
     });
 
-    // 2. Stay in sync with future logins/logouts.
+    // Stay in sync with future logins and logouts.
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, next) => {
       setSession(next);
-      // Defer the DB call: calling Supabase *inside* this callback can
-      // deadlock, so we push it to the next tick.
+      // Calling Supabase *inside* this callback can deadlock, so run the
+      // household check on the next tick instead.
       setTimeout(() => loadHousehold(next), 0);
     });
 
