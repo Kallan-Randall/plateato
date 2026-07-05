@@ -2,14 +2,13 @@
 -- Plateato — Migration 0001: Foundation
 -- Identity, household sharing, and the unit engine.
 --
--- How to run: paste this into the Supabase dashboard SQL editor (or apply via
--- the Supabase CLI). We'll run + test it together once the project exists.
+-- How to run: apply via the Supabase CLI, or paste into the dashboard SQL editor.
 -- ============================================================================
 
 -- ----------------------------------------------------------------------------
 -- PROFILES
 -- Supabase Auth stores login credentials in the built-in auth.users table.
--- We keep app-level user data in our own public.profiles table, linked 1:1.
+-- App-level user data lives in public.profiles, linked 1:1 to auth.users.
 -- ----------------------------------------------------------------------------
 create table public.profiles (
   id            uuid primary key references auth.users (id) on delete cascade,
@@ -75,7 +74,7 @@ create table public.household_invites (
 );
 
 -- ----------------------------------------------------------------------------
--- UNIT ENGINE — our signature "fix the quantity math" foundation.
+-- UNIT ENGINE — exact quantity conversions within a dimension.
 -- A unit belongs to one dimension and converts to that dimension's base unit
 -- (mass -> grams, volume -> millilitres, count -> each) via to_base_factor.
 -- ----------------------------------------------------------------------------
@@ -127,7 +126,7 @@ alter table public.household_members enable row level security;
 alter table public.household_invites enable row level security;
 alter table public.units             enable row level security;
 
--- Profiles: you can read/insert/update only your own.
+-- Profiles: a user may read/insert/update only their own row.
 create policy "profiles: read own"   on public.profiles for select using (id = auth.uid());
 create policy "profiles: insert own" on public.profiles for insert with check (id = auth.uid());
 create policy "profiles: update own" on public.profiles for update using (id = auth.uid());
