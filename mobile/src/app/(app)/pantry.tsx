@@ -136,7 +136,12 @@ export default function PantryScreen() {
           renderItem={({ item }) => {
             const exp = expirationStatus(item.expiration_date);
             return (
-              <View style={[styles.row, { borderBottomColor: theme.border }]}>
+              <Pressable
+                onPress={() => router.push(('/edit-item?id=' + item.id) as Href)}
+                style={({ pressed }) => [
+                  styles.row,
+                  { borderBottomColor: theme.border, opacity: pressed ? 0.6 : 1 },
+                ]}>
                 <ThemedText type="default">{item.name}</ThemedText>
                 <View style={styles.rowRight}>
                   <ThemedText type="small" themeColor="textSecondary">
@@ -151,7 +156,7 @@ export default function PantryScreen() {
                     </View>
                   ) : null}
                 </View>
-              </View>
+              </Pressable>
             );
           }}
           ListEmptyComponent={

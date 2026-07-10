@@ -11,6 +11,7 @@ import { TextField } from '@/components/ui/text-field';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/lib/auth';
+import { EXP_PRESETS, closestPresetDays, isoDatePlusDays } from '@/lib/expiration';
 import { supabase } from '@/lib/supabase';
 
 type CommonItem = {
@@ -24,38 +25,6 @@ type CommonItem = {
 type Unit = { id: string; abbreviation: string; dimension: string };
 type Location = { id: string; name: string; sort_order: number };
 type Selected = { commonItemId: string | null; name: string; categoryId: string | null };
-
-const EXP_PRESETS: { label: string; days: number | null }[] = [
-  { label: 'None', days: null },
-  { label: '3 days', days: 3 },
-  { label: '1 week', days: 7 },
-  { label: '2 weeks', days: 14 },
-  { label: '1 month', days: 30 },
-  { label: '3 months', days: 90 },
-  { label: '1 year', days: 365 },
-];
-
-function isoDatePlusDays(days: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
-
-// Map an item's typical shelf life to the nearest preset the user can tap.
-function closestPresetDays(shelfLife: number | null): number | null {
-  if (shelfLife == null) return null;
-  let best: number | null = null;
-  let bestDiff = Infinity;
-  for (const preset of EXP_PRESETS) {
-    if (preset.days == null) continue;
-    const diff = Math.abs(preset.days - shelfLife);
-    if (diff < bestDiff) {
-      bestDiff = diff;
-      best = preset.days;
-    }
-  }
-  return best;
-}
 
 export default function AddItemScreen() {
   const theme = useTheme();
