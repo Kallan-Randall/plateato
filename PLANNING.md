@@ -47,6 +47,33 @@ Goal: ship something that proves the core **track → cook → restock** loop en
 
 ---
 
+## V1.0 Launch Scope — ship Pantry + Shopping first
+Decision (2026-06-27): publish a real, useful app ASAP, then iterate. **v1.0 = pantry tracking + a shared shopping list + household sharing + expiration awareness.** The recipe↔pantry loop (our differentiator) ships as **v1.1**.
+
+**v1.0 feature checklist**
+- [x] Auth + household onboarding
+- [x] Pantry schema + view
+- [ ] Pantry: add item (catalog search → confirm → save)
+- [ ] Pantry: edit / use-up / delete (swipe + stepper)
+- [ ] Shopping: schema (one shared list per household)
+- [ ] Shopping: view, add items, check off, grouped by category
+- [ ] Settings: sign out, unit preference, **account deletion** (required by Apple)
+- [ ] Light Home dashboard (expiring-soon summary)
+- [ ] App icon + splash (real branding)
+- [ ] Polish: confirm dialogs, error/empty states
+
+**Deferred to v1.1+:** recipes, pantry-match, recipe→shopping-list generation, meal-plan calendar, nutrition UI, barcode scanning, notifications, real-time sync (v1.0 uses fetch-on-focus), multiple shopping lists, AI scanners, social/friend network.
+
+**Publishing pipeline (required to launch)**
+- [ ] EAS Build (cloud iOS + Android — no Mac needed)
+- [ ] Apple Developer ($99/yr) + Google Play ($25 one-time)
+- [ ] Privacy policy (written + hosted)
+- [ ] Store listings, screenshots, data-safety forms
+- [ ] Supabase hardening: custom SMTP for auth email, re-enable email confirmation, consider Pro tier (free tier pauses when idle)
+- [ ] Submit + review (Apple ~1–2 days and can bounce; Google similar)
+
+---
+
 ## User Flows (v1) — all settled
 
 ### Flow 1 — Onboarding & Household Setup
