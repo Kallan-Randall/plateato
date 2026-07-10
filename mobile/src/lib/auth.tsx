@@ -13,7 +13,9 @@ import { supabase } from '@/lib/supabase';
 type AuthState = {
   /** The Supabase auth session, or null when signed out. */
   session: Session | null;
-  /** Whether the signed-in user belongs to at least one household. */
+  /** The active household's id, or null if the user has none yet. */
+  householdId: string | null;
+  /** Convenience flag: whether the user belongs to a household. */
   hasHousehold: boolean;
   /** True while the initial session and household state are still resolving. */
   isLoading: boolean;
@@ -36,20 +38,22 @@ export function useAuth() {
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [session, setSession] = useState<Session | null>(null);
-  const [hasHousehold, setHasHousehold] = useState(false);
+  const [householdId, setHouseholdId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Whether this user belongs to any household (a lightweight count query).
+  // Look up the user's active household (the first one they belong to).
   const loadHousehold = useCallback(async (current: Session | null) => {
     if (!current?.user) {
-      setHasHousehold(false);
+      setHouseholdId(null);
       return;
     }
-    const { count } = await supabase
+    const { data } = await supabase
       .from('household_members')
-      .select('*', { count: 'exact', head: true })
-      .eq('profile_id', current.user.id);
-    setHasHousehold((count ?? 0) > 0);
+      .select('household_id')
+      .eq('profile_id', current.user.id)
+      .limit(1)
+      .maybeSingle();
+    setHouseholdId((data?.household_id as string | undefined) ?? null);
   }, []);
 
   useEffect(() => {
@@ -89,7 +93,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ session, hasHousehold, isLoading, refreshHousehold, signOut }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        householdId,
+        hasHousehold: householdId !== null,
+        isLoading,
+        refreshHousehold,
+        signOut,
+      }}>
       {children}
     </AuthContext.Provider>
   );
