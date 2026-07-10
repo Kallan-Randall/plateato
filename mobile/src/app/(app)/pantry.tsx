@@ -1,6 +1,13 @@
-import { useFocusEffect } from 'expo-router';
+import { type Href, router, useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, RefreshControl, SectionList, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  RefreshControl,
+  SectionList,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
@@ -98,9 +105,21 @@ export default function PantryScreen() {
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safe} edges={['top']}>
-        <ThemedText type="subtitle" themeColor="primary" style={styles.title}>
-          Pantry
-        </ThemedText>
+        <View style={styles.header}>
+          <ThemedText type="subtitle" themeColor="primary">
+            Pantry
+          </ThemedText>
+          <Pressable
+            onPress={() => router.push('/add-item' as Href)}
+            style={({ pressed }) => [
+              styles.addButton,
+              { backgroundColor: theme.primary, opacity: pressed ? 0.85 : 1 },
+            ]}>
+            <ThemedText type="small" style={{ color: theme.onPrimary }}>
+              + Add
+            </ThemedText>
+          </Pressable>
+        </View>
 
         <SectionList
           sections={sections}
@@ -141,7 +160,7 @@ export default function PantryScreen() {
                 Your pantry is empty.
               </ThemedText>
               <ThemedText type="small" themeColor="textSecondary" style={styles.emptyText}>
-                Adding items comes next — the + button is on the way.
+                Tap “+ Add” to put your first item in.
               </ThemedText>
             </View>
           }
@@ -155,10 +174,18 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   safe: { flex: 1 },
-  title: {
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.three,
     paddingBottom: Spacing.two,
+  },
+  addButton: {
+    paddingHorizontal: Spacing.three,
+    paddingVertical: Spacing.one,
+    borderRadius: 999,
   },
   listContent: { paddingBottom: Spacing.six, flexGrow: 1 },
   sectionHeader: {
