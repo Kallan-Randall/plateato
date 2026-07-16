@@ -14,6 +14,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { expirationStatus } from '@/lib/expiration';
 import { supabase } from '@/lib/supabase';
 
 type PantryItem = {
@@ -40,16 +41,6 @@ function formatQuantity(item: PantryItem): string {
   }
   if (item.quantity == null) return '—';
   return item.unit?.abbreviation ? `${item.quantity} ${item.unit.abbreviation}` : `${item.quantity}`;
-}
-
-type ExpStatus = { label: string; color: 'success' | 'warning' | 'danger' };
-
-function expirationStatus(date: string | null): ExpStatus | null {
-  if (!date) return null;
-  const days = Math.ceil((new Date(date).getTime() - Date.now()) / 86_400_000);
-  if (days < 0) return { label: 'Expired', color: 'danger' };
-  if (days <= 3) return { label: days === 0 ? 'Today' : `${days}d left`, color: 'warning' };
-  return { label: `${days}d`, color: 'success' };
 }
 
 function groupByLocation(items: PantryItem[]): Section[] {

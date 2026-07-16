@@ -1,3 +1,14 @@
+export type ExpirationStatus = { label: string; color: 'success' | 'warning' | 'danger' };
+
+/** Traffic-light status for an expiration date: green (fine), amber (≤3 days), red (expired). */
+export function expirationStatus(date: string | null): ExpirationStatus | null {
+  if (!date) return null;
+  const days = Math.ceil((new Date(date).getTime() - Date.now()) / 86_400_000);
+  if (days < 0) return { label: 'Expired', color: 'danger' };
+  if (days <= 3) return { label: days === 0 ? 'Today' : `${days}d left`, color: 'warning' };
+  return { label: `${days}d`, color: 'success' };
+}
+
 export const EXP_PRESETS: { label: string; days: number | null }[] = [
   { label: 'None', days: null },
   { label: '3 days', days: 3 },
