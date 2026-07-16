@@ -8,9 +8,11 @@
     "scheme": "plateato",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/images/icon.png"
+      "icon": "./assets/images/icon.png",
+      "bundleIdentifier": "com.kallanrandall.plateato"
     },
     "android": {
+      "package": "com.kallanrandall.plateato",
       "adaptiveIcon": {
         "backgroundColor": "#2F8F5B",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -37,6 +39,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "833ad679-4a70-420f-81b0-b80f1c28b3a5"
+      }
+    },
+    "owner": "kallan-randalls-team"
   }
 }
