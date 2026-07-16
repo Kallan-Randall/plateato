@@ -36,6 +36,7 @@ function RootNavigator() {
         <Stack.Screen name="(app)" />
         <Stack.Screen name="add-item" options={{ presentation: 'modal' }} />
         <Stack.Screen name="edit-item" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
       </Stack.Protected>
     </Stack>
   );
