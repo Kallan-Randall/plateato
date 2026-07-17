@@ -69,5 +69,12 @@
       <a href="index.html">Plateato</a> · <a href="privacy.html">Privacy policy</a>
     </footer>
   </main>
+  <script>
+    // plateato:// only has a handler where the app can be installed, so the
+    // open-app button is pointless on desktop browsers. Hide it there.
+    if (!/android|iphone|ipad|ipod/i.test(navigator.userAgent)) {
+      document.querySelector('.open-app').style.display = 'none';
+    }
+  </script>
 </body>
 </html>
