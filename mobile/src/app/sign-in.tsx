@@ -9,22 +9,44 @@ import { TextField } from '@/components/ui/text-field';
 import { Spacing } from '@/constants/theme';
 import { supabase } from '@/lib/supabase';
 
+// Where the confirmation email's link lands after Supabase verifies the account.
+const EMAIL_CONFIRMED_URL = 'https://kallan-randall.github.io/plateato/confirmed.html';
+
 export default function SignInScreen() {
   const [mode, setMode] = useState<'signIn' | 'signUp'>('signIn');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
   const submit = async () => {
     setLoading(true);
     setError(null);
-    const result =
-      mode === 'signIn'
-        ? await supabase.auth.signInWithPassword({ email, password })
-        : await supabase.auth.signUp({ email, password });
-    if (result.error) {
-      setError(result.error.message);
+    setNotice(null);
+    if (mode === 'signIn') {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        setError(
+          signInError.message === 'Email not confirmed'
+            ? 'Confirm your email first — check your inbox for the link we sent.'
+            : signInError.message,
+        );
+      }
+    } else {
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: EMAIL_CONFIRMED_URL },
+      });
+      if (signUpError) {
+        setError(signUpError.message);
+      } else if (!data.session) {
+        // With email confirmation enabled there is no session until the link
+        // in the email is clicked, so point the user at their inbox.
+        setNotice(`Almost there — we sent a confirmation link to ${email}. Confirm, then sign in.`);
+        setMode('signIn');
+      }
     }
     // On success, the auth listener in AuthProvider updates the route.
     setLoading(false);
@@ -63,6 +85,11 @@ export default function SignInScreen() {
             placeholder="At least 6 characters"
           />
 
+          {notice ? (
+            <ThemedText type="small" themeColor="success">
+              {notice}
+            </ThemedText>
+          ) : null}
           {error ? (
             <ThemedText type="small" themeColor="danger">
               {error}
