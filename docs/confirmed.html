@@ -38,6 +38,17 @@
     }
     h1 { color: var(--green-dark); font-size: 1.8rem; margin-bottom: 12px; }
     p { color: var(--text-secondary); line-height: 1.6; }
+    .open-app {
+      display: inline-block;
+      margin-top: 24px;
+      padding: 14px 32px;
+      border-radius: 12px;
+      background: var(--green);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .hint { margin-top: 12px; font-size: 0.85rem; }
     footer { margin-top: 32px; font-size: 0.85rem; }
     footer a { color: var(--green); }
   </style>
@@ -49,6 +60,10 @@
     <p>
       Your Plateato account is ready. Head back to the app and sign in with your email and
       password.
+    </p>
+    <a class="open-app" href="plateato://">Open the Plateato app</a>
+    <p class="hint">
+      Reading this on a computer? Just return to wherever you signed up and sign in there.
     </p>
     <footer>
       <a href="index.html">Plateato</a> · <a href="privacy.html">Privacy policy</a>
