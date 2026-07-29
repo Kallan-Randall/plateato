@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+/*
+ * Values mirror packages/core/src/tokens.ts (Colors.light / Colors.dark),
+ * which mirrors mobile/src/constants/theme.ts. Keep the three in sync by
+ * hand for now — see packages/core/README.md.
+ */
+:root {
+  --background: #f6fbf6;
+  --background-element: #ffffff;
+  --background-selected: #e3efe6;
+  --foreground: #16261c;
+  --foreground-secondary: #5c6b62;
+  --border: #e2eae4;
+  --primary: #2f8f5b;
+  --primary-dark: #1c5c39;
+  --on-primary: #ffffff;
+  --accent: #f0784b;
+  --amber: #f4b740;
+  --success: #2f8f5b;
+  --warning: #e0962a;
+  --danger: #d1483c;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-element: var(--background-element);
+  --color-background-selected: var(--background-selected);
+  --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-on-primary: var(--on-primary);
+  --color-accent: var(--accent);
+  --color-amber: var(--amber);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f1511;
+    --background-element: #18211b;
+    --background-selected: #24302a;
+    --foreground: #eaf3ec;
+    --foreground-secondary: #9cb0a4;
+    --border: #28332c;
+    --primary: #3da76b;
+    --primary-dark: #2f8f5b;
+    --accent: #f2865c;
+    --success: #3da76b;
+    --warning: #e0a23e;
+    --danger: #e0594b;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
