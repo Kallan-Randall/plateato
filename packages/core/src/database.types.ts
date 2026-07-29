@@ -5,6 +5,11 @@
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
+  // Required by recent @supabase/supabase-js versions for correct generic
+  // resolution (matches real `supabase gen types` output).
+  __InternalSupabase: {
+    PostgrestVersion: '12';
+  };
   public: {
     Tables: {
       profiles: {
@@ -26,6 +31,7 @@ export type Database = {
           unit_preference?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       households: {
         Row: {
@@ -46,6 +52,15 @@ export type Database = {
           created_by?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'households_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       household_members: {
         Row: {
@@ -66,6 +81,22 @@ export type Database = {
           role?: string;
           joined_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'household_members_household_id_fkey';
+            columns: ['household_id'];
+            isOneToOne: false;
+            referencedRelation: 'households';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'household_members_profile_id_fkey';
+            columns: ['profile_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       household_invites: {
         Row: {
@@ -92,6 +123,22 @@ export type Database = {
           expires_at?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'household_invites_household_id_fkey';
+            columns: ['household_id'];
+            isOneToOne: false;
+            referencedRelation: 'households';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'household_invites_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       units: {
         Row: {
@@ -115,16 +162,19 @@ export type Database = {
           dimension?: Database['public']['Enums']['dimension'];
           to_base_factor?: number;
         };
+        Relationships: [];
       };
       categories: {
         Row: { id: string; name: string; sort_order: number };
         Insert: { id: string; name: string; sort_order?: number };
         Update: { id?: string; name?: string; sort_order?: number };
+        Relationships: [];
       };
       locations: {
         Row: { id: string; name: string; sort_order: number };
         Insert: { id: string; name: string; sort_order?: number };
         Update: { id?: string; name?: string; sort_order?: number };
+        Relationships: [];
       };
       common_items: {
         Row: {
@@ -166,6 +216,29 @@ export type Database = {
           carbs_g_per_100?: number | null;
           fat_g_per_100?: number | null;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'common_items_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'common_items_default_unit_id_fkey';
+            columns: ['default_unit_id'];
+            isOneToOne: false;
+            referencedRelation: 'units';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'common_items_default_location_id_fkey';
+            columns: ['default_location_id'];
+            isOneToOne: false;
+            referencedRelation: 'locations';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       pantry_items: {
         Row: {
@@ -219,6 +292,57 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'pantry_items_household_id_fkey';
+            columns: ['household_id'];
+            isOneToOne: false;
+            referencedRelation: 'households';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'pantry_items_common_item_id_fkey';
+            columns: ['common_item_id'];
+            isOneToOne: false;
+            referencedRelation: 'common_items';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'pantry_items_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'pantry_items_location_id_fkey';
+            columns: ['location_id'];
+            isOneToOne: false;
+            referencedRelation: 'locations';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'pantry_items_unit_id_fkey';
+            columns: ['unit_id'];
+            isOneToOne: false;
+            referencedRelation: 'units';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'pantry_items_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'pantry_items_updated_by_fkey';
+            columns: ['updated_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       shopping_lists: {
         Row: {
@@ -239,6 +363,15 @@ export type Database = {
           name?: string;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'shopping_lists_household_id_fkey';
+            columns: ['household_id'];
+            isOneToOne: false;
+            referencedRelation: 'households';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       shopping_list_items: {
         Row: {
@@ -277,6 +410,43 @@ export type Database = {
           added_by?: string | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: 'shopping_list_items_list_id_fkey';
+            columns: ['list_id'];
+            isOneToOne: false;
+            referencedRelation: 'shopping_lists';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'shopping_list_items_common_item_id_fkey';
+            columns: ['common_item_id'];
+            isOneToOne: false;
+            referencedRelation: 'common_items';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'shopping_list_items_category_id_fkey';
+            columns: ['category_id'];
+            isOneToOne: false;
+            referencedRelation: 'categories';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'shopping_list_items_unit_id_fkey';
+            columns: ['unit_id'];
+            isOneToOne: false;
+            referencedRelation: 'units';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'shopping_list_items_added_by_fkey';
+            columns: ['added_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Views: Record<string, never>;
