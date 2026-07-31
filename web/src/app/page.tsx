@@ -1,25 +1,125 @@
+import type { Metadata } from 'next';
+import Image from 'next/image';
+import Link from 'next/link';
+
+const PRIVACY_URL = 'https://kallan-randall.github.io/plateato/privacy.html';
+const DELETE_ACCOUNT_URL = 'https://kallan-randall.github.io/plateato/delete-account.html';
+
+export const metadata: Metadata = {
+  title: 'Plateato — Know your kitchen',
+  description:
+    'A shared pantry and shopping list for your household. Track what you have, use it before it expires, and shop from one list everyone can update.',
+  openGraph: {
+    title: 'Plateato — Know your kitchen',
+    description:
+      'A shared pantry and shopping list for your household. Track what you have, use it before it expires, and shop from one list everyone can update.',
+    type: 'website',
+  },
+};
+
+const features = [
+  {
+    title: 'Know what you have',
+    body: 'Add items in seconds from a built-in catalog with smart defaults for units, storage location, and shelf life. Organized by where things actually live — fridge, freezer, pantry, spice rack.',
+  },
+  {
+    title: 'Waste less',
+    body: 'Color-coded expiration indicators show what is fine, what is close, and what is past. The dashboard surfaces what needs using before it goes bad.',
+  },
+  {
+    title: 'Shop together',
+    body: 'One shared list for the whole household, grouped by aisle and checked off as you go. Everyone sees the same list, so nobody buys milk twice.',
+  },
+];
+
+const screenshots = [
+  { src: '/screenshots/pantry.png', alt: 'Pantry grouped by location with expiration indicators', caption: 'Your pantry, by location' },
+  { src: '/screenshots/home.png', alt: 'Dashboard showing expiring items and a shopping snapshot', caption: 'What needs attention' },
+  { src: '/screenshots/shopping.png', alt: 'Shopping list grouped by category', caption: 'One shared list' },
+  { src: '/screenshots/add-item.png', alt: 'Add item screen with smart defaults', caption: 'Add in seconds' },
+];
+
 export default function Home() {
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-start gap-6 px-6 py-16">
-      <h1 className="text-3xl font-semibold tracking-tight text-foreground">
-        Know your kitchen.
-      </h1>
-      <p className="max-w-md text-foreground-secondary">
-        The web app scaffold is live — auth, pantry, and shopping screens land in the phases
-        after this one.
-      </p>
-      <div className="flex flex-wrap gap-3 text-sm">
-        <span className="rounded-full bg-success/10 px-3 py-1 text-success">success</span>
-        <span className="rounded-full bg-warning/10 px-3 py-1 text-warning">warning</span>
-        <span className="rounded-full bg-danger/10 px-3 py-1 text-danger">danger</span>
-        <span className="rounded-full bg-accent/10 px-3 py-1 text-accent">accent</span>
-      </div>
-      <div className="rounded-2xl border border-border bg-background-element p-6">
-        <p className="text-sm text-foreground-secondary">
-          This card uses <code>background-element</code> and <code>border</code> — confirms the
-          token wiring from <code>@plateato/core</code> reached Tailwind.
+    <>
+      <section className="mx-auto flex w-full max-w-5xl flex-col items-start gap-6 px-6 py-20 md:py-28">
+        <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
+          Know what&rsquo;s in your kitchen.
+        </h1>
+        <p className="max-w-xl text-lg leading-relaxed text-foreground-secondary">
+          Plateato is a shared pantry and shopping list for your household. Track what you have, use
+          it before it expires, and shop from one list everyone can update.
         </p>
-      </div>
-    </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href="/login"
+            className="flex h-12 items-center rounded-xl bg-primary px-6 font-medium text-on-primary"
+          >
+            Open the app
+          </Link>
+          <Link
+            href="#features"
+            className="flex h-12 items-center rounded-xl border border-border px-6 font-medium text-foreground"
+          >
+            See how it works
+          </Link>
+        </div>
+        <p className="text-sm text-foreground-secondary">
+          Free, no ads. Also in closed beta on Android.
+        </p>
+      </section>
+
+      <section id="features" className="border-t border-border bg-background-element">
+        <div className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-10 px-6 py-16 md:grid-cols-3">
+          {features.map((feature) => (
+            <div key={feature.title} className="flex flex-col gap-2">
+              <h2 className="text-lg font-semibold text-primary">{feature.title}</h2>
+              <p className="leading-relaxed text-foreground-secondary">{feature.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-16">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Built for the way you actually cook
+        </h2>
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {screenshots.map((shot) => (
+            <figure key={shot.src} className="flex flex-col gap-3">
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                width={440}
+                height={953}
+                // Four across in a max-w-5xl container on desktop, two across
+                // below it — without this Next assumes full width and serves
+                // far larger variants than these slots need.
+                sizes="(min-width: 768px) 226px, 45vw"
+                className="w-full rounded-xl border border-border"
+              />
+              <figcaption className="text-sm text-foreground-secondary">{shot.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </section>
+
+      <footer className="border-t border-border">
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-6 py-10 text-sm text-foreground-secondary sm:flex-row sm:items-center sm:justify-between">
+          <span>© {new Date().getFullYear()} Plateato</span>
+          <nav className="flex flex-wrap gap-4">
+            <a href={PRIVACY_URL} className="hover:text-foreground">
+              Privacy policy
+            </a>
+            <a href={DELETE_ACCOUNT_URL} className="hover:text-foreground">
+              Delete your account
+            </a>
+            <Link href="/login" className="hover:text-foreground">
+              Sign in
+            </Link>
+          </nav>
+        </div>
+      </footer>
+    </>
   );
 }
