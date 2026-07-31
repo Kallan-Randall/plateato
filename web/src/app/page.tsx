@@ -42,8 +42,8 @@ const screenshots = [
 export default function Home() {
   return (
     <>
-      <section className="mx-auto flex w-full max-w-5xl flex-col items-start gap-6 px-6 py-20 md:py-28">
-        <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-foreground md:text-6xl">
+      <section className="mx-auto flex w-full max-w-5xl flex-col items-start gap-6 px-6 py-14 md:py-28">
+        <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl md:text-6xl">
           Know what&rsquo;s in your kitchen.
         </h1>
         <p className="max-w-xl text-lg leading-relaxed text-foreground-secondary">
@@ -84,18 +84,21 @@ export default function Home() {
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           Built for the way you actually cook
         </h2>
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+        {/* A 4-up grid squeezes these to ~144px on a phone, where the UI in
+            them is unreadable. Below md they become a swipeable row instead,
+            so each stays large enough to actually see. */}
+        <div className="-mx-6 flex snap-x snap-mandatory gap-6 overflow-x-auto px-6 pb-2 md:mx-0 md:grid md:grid-cols-4 md:overflow-x-visible md:px-0 md:pb-0">
           {screenshots.map((shot) => (
-            <figure key={shot.src} className="flex flex-col gap-3">
+            <figure key={shot.src} className="flex w-56 shrink-0 snap-start flex-col gap-3 md:w-auto">
               <Image
                 src={shot.src}
                 alt={shot.alt}
                 width={440}
                 height={953}
-                // Four across in a max-w-5xl container on desktop, two across
-                // below it — without this Next assumes full width and serves
-                // far larger variants than these slots need.
-                sizes="(min-width: 768px) 226px, 45vw"
+                // ~226px in the desktop grid, 224px in the mobile carousel —
+                // without this Next assumes full viewport width and serves far
+                // larger variants than these slots need.
+                sizes="226px"
                 className="w-full rounded-xl border border-border"
               />
               <figcaption className="text-sm text-foreground-secondary">{shot.caption}</figcaption>
