@@ -11,7 +11,7 @@ export function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-3 py-1 text-sm ${
+      className={`min-h-9 rounded-full border px-3 py-1.5 text-sm ${
         selected
           ? 'border-primary bg-primary text-on-primary'
           : 'border-border bg-transparent text-foreground'

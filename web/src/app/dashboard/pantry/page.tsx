@@ -42,7 +42,7 @@ export default async function PantryPage() {
         <h1 className="text-2xl font-semibold text-foreground">Pantry</h1>
         <Link
           href="/dashboard/pantry/add"
-          className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-on-primary"
+          className="inline-flex h-11 items-center rounded-full bg-primary px-5 text-sm font-medium text-on-primary"
         >
           + Add
         </Link>
