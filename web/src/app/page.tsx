@@ -5,15 +5,26 @@ import Link from 'next/link';
 const PRIVACY_URL = 'https://kallan-randall.github.io/plateato/privacy.html';
 const DELETE_ACCOUNT_URL = 'https://kallan-randall.github.io/plateato/delete-account.html';
 
+const TITLE = 'Plateato — Know your kitchen';
+const DESCRIPTION =
+  'A shared pantry and shopping list for your household. Track what you have, use it before it expires, and shop from one list everyone can update.';
+
 export const metadata: Metadata = {
-  title: 'Plateato — Know your kitchen',
-  description:
-    'A shared pantry and shopping list for your household. Track what you have, use it before it expires, and shop from one list everyone can update.',
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'Plateato — Know your kitchen',
-    description:
-      'A shared pantry and shopping list for your household. Track what you have, use it before it expires, and shop from one list everyone can update.',
+    title: TITLE,
+    description: DESCRIPTION,
     type: 'website',
+    url: '/',
+    images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: TITLE }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ['/opengraph-image.png'],
   },
 };
 
