@@ -68,7 +68,11 @@ export function ShoppingListView({
           onChange={(e) => setNewItem(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submitAdd()}
           placeholder="Add an item: milk, bread…"
-          className="h-12 flex-1 rounded-xl border border-border bg-background-element px-3 outline-none focus:border-primary"
+          // min-w-0 is load-bearing: an input carries an intrinsic minimum
+          // width, and flex items default to min-width:auto, so without this
+          // flex-1 cannot shrink it and it pushes Add off screen on narrow
+          // phones.
+          className="h-12 min-w-0 flex-1 rounded-xl border border-border bg-background-element px-3 outline-none focus:border-primary"
         />
         <button
           type="button"
@@ -103,7 +107,7 @@ export function ShoppingListView({
                   }`}
                 >
                   <span className="h-5 w-5 shrink-0 rounded-md border-2 border-border" />
-                  <span className="flex-1 text-foreground">{item.name}</span>
+                  <span className="min-w-0 flex-1 break-words text-foreground">{item.name}</span>
                   {formatQty(item) ? (
                     <span className="text-sm text-foreground-secondary">{formatQty(item)}</span>
                   ) : null}
@@ -143,7 +147,9 @@ export function ShoppingListView({
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-primary text-xs text-on-primary">
                   ✓
                 </span>
-                <span className="flex-1 text-foreground-secondary line-through">{item.name}</span>
+                <span className="min-w-0 flex-1 break-words text-foreground-secondary line-through">
+                  {item.name}
+                </span>
               </button>
             ))}
           </div>
