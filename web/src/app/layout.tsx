@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // Required for relative URLs in metadata (og:image, canonical, etc.) to
+  // resolve to absolute ones — without it, share previews silently fail.
+  metadataBase: new URL('https://www.plateato.com'),
   title: 'Plateato',
   description: 'A shared pantry and shopping list for your household.',
 };
