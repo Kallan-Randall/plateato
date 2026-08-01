@@ -112,7 +112,7 @@ export default function AddPantryItemPage() {
         <button
           type="button"
           onClick={() => (selected ? setSelected(null) : router.push('/dashboard/pantry'))}
-          className="text-sm text-foreground-secondary"
+          className="-my-2 py-2 text-sm text-foreground-secondary"
         >
           {selected ? 'Back to search' : 'Cancel'}
         </button>

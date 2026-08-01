@@ -71,12 +71,14 @@ export default async function PantryPage() {
                   <Link
                     key={item.id}
                     href={`/dashboard/pantry/${item.id}/edit`}
-                    className={`flex items-center justify-between px-4 py-3 hover:bg-background-selected ${
+                    className={`flex items-center justify-between gap-3 px-4 py-3 hover:bg-background-selected ${
                       i > 0 ? 'border-t border-border' : ''
                     }`}
                   >
-                    <span className="text-foreground">{item.name}</span>
-                    <span className="flex items-center gap-3 text-sm text-foreground-secondary">
+                    <span className="min-w-0 break-words text-foreground">{item.name}</span>
+                    {/* Quantity and expiry must stay legible, so the name is
+                        what gives way when a row runs out of room. */}
+                    <span className="flex shrink-0 items-center gap-3 text-sm text-foreground-secondary">
                       {qty ?? '—'}
                       {exp ? (
                         <span className="flex items-center gap-1">

@@ -110,14 +110,14 @@ export default function Home() {
       <footer className="border-t border-border">
         <div className="mx-auto flex w-full max-w-5xl flex-col gap-3 px-6 py-10 text-sm text-foreground-secondary sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} Plateato</span>
-          <nav className="flex flex-wrap gap-4">
-            <a href={PRIVACY_URL} className="hover:text-foreground">
+          <nav className="flex flex-wrap gap-x-4">
+            <a href={PRIVACY_URL} className="py-2 hover:text-foreground">
               Privacy policy
             </a>
-            <a href={DELETE_ACCOUNT_URL} className="hover:text-foreground">
+            <a href={DELETE_ACCOUNT_URL} className="py-2 hover:text-foreground">
               Delete your account
             </a>
-            <Link href="/login" className="hover:text-foreground">
+            <Link href="/login" className="py-2 hover:text-foreground">
               Sign in
             </Link>
           </nav>

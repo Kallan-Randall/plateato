@@ -33,10 +33,15 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col">
         <header className="border-b border-border">
           <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-            <Link href="/" className="text-lg font-semibold text-primary">
+            {/* The -my pairs keep the bar's height while giving these links a
+                comfortable tap area on touch screens. */}
+            <Link href="/" className="-my-2 py-2 text-lg font-semibold text-primary">
               Plateato
             </Link>
-            <Link href={user ? '/dashboard' : '/login'} className="text-sm text-foreground-secondary">
+            <Link
+              href={user ? '/dashboard' : '/login'}
+              className="-my-3 py-3 text-sm text-foreground-secondary"
+            >
               {user ? 'Dashboard' : 'Sign in'}
             </Link>
           </div>

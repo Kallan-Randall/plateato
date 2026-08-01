@@ -75,7 +75,7 @@ export function EditPantryItemForm({
         <button
           type="button"
           onClick={() => router.push('/dashboard/pantry')}
-          className="text-sm text-foreground-secondary"
+          className="-my-2 py-2 text-sm text-foreground-secondary"
         >
           Cancel
         </button>
