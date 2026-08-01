@@ -120,7 +120,13 @@ export function ShoppingListView({
             <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-secondary">
               Checked off
             </h2>
-            <button type="button" onClick={clearChecked} className="text-sm text-danger">
+            {/* Deletes every checked item, so it needs a tap area that is hard
+                to hit by accident on a phone. */}
+            <button
+              type="button"
+              onClick={clearChecked}
+              className="-my-2 -mr-2 px-2 py-2 text-sm text-danger"
+            >
               Clear
             </button>
           </div>
