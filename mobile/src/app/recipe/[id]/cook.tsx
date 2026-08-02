@@ -12,9 +12,8 @@ import { TextField } from '@/components/ui/text-field';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/lib/auth';
-import { formatCleanQuantity } from '@/lib/format-quantity';
-import { type PantryStockRow, type UnitInfo } from '@/lib/pantry-match';
 import { supabase } from '@/lib/supabase';
+import { type PantryStockRow, type UnitInfo, formatCleanQuantity } from '@plateato/core';
 
 type Recipe = { id: string; title: string; servings: number };
 type RecipeIngredient = {

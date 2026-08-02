@@ -9,15 +9,15 @@ import { Button } from '@/components/ui/button';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/lib/auth';
-import { formatCleanQuantity } from '@/lib/format-quantity';
+import { supabase } from '@/lib/supabase';
 import {
   type IngredientMatchStatus,
   type PantryStockRow,
   type UnitInfo,
+  formatCleanQuantity,
   matchIngredient,
   pantryMatchCount,
-} from '@/lib/pantry-match';
-import { supabase } from '@/lib/supabase';
+} from '@plateato/core';
 
 type Recipe = {
   id: string;

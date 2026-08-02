@@ -448,6 +448,208 @@ export type Database = {
           },
         ];
       };
+      recipes: {
+        Row: {
+          id: string;
+          household_id: string;
+          title: string;
+          photo_url: string | null;
+          servings: number;
+          tags: string[];
+          calories_per_serving: number | null;
+          protein_g_per_serving: number | null;
+          carbs_g_per_serving: number | null;
+          fat_g_per_serving: number | null;
+          created_by: string | null;
+          updated_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          household_id: string;
+          title: string;
+          photo_url?: string | null;
+          servings?: number;
+          tags?: string[];
+          calories_per_serving?: number | null;
+          protein_g_per_serving?: number | null;
+          carbs_g_per_serving?: number | null;
+          fat_g_per_serving?: number | null;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          household_id?: string;
+          title?: string;
+          photo_url?: string | null;
+          servings?: number;
+          tags?: string[];
+          calories_per_serving?: number | null;
+          protein_g_per_serving?: number | null;
+          carbs_g_per_serving?: number | null;
+          fat_g_per_serving?: number | null;
+          created_by?: string | null;
+          updated_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'recipes_household_id_fkey';
+            columns: ['household_id'];
+            isOneToOne: false;
+            referencedRelation: 'households';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recipes_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recipes_updated_by_fkey';
+            columns: ['updated_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      recipe_ingredients: {
+        Row: {
+          id: string;
+          recipe_id: string;
+          sort_order: number;
+          raw_text: string;
+          parsed_quantity: number | null;
+          parsed_unit_id: string | null;
+          common_item_id: string | null;
+          match_confidence: 'high' | 'low' | 'unmatched';
+          prep_note: string | null;
+        };
+        Insert: {
+          id?: string;
+          recipe_id: string;
+          sort_order?: number;
+          raw_text: string;
+          parsed_quantity?: number | null;
+          parsed_unit_id?: string | null;
+          common_item_id?: string | null;
+          match_confidence?: 'high' | 'low' | 'unmatched';
+          prep_note?: string | null;
+        };
+        Update: {
+          id?: string;
+          recipe_id?: string;
+          sort_order?: number;
+          raw_text?: string;
+          parsed_quantity?: number | null;
+          parsed_unit_id?: string | null;
+          common_item_id?: string | null;
+          match_confidence?: 'high' | 'low' | 'unmatched';
+          prep_note?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'recipe_ingredients_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recipe_ingredients_parsed_unit_id_fkey';
+            columns: ['parsed_unit_id'];
+            isOneToOne: false;
+            referencedRelation: 'units';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'recipe_ingredients_common_item_id_fkey';
+            columns: ['common_item_id'];
+            isOneToOne: false;
+            referencedRelation: 'common_items';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      recipe_steps: {
+        Row: {
+          id: string;
+          recipe_id: string;
+          step_number: number;
+          text: string;
+          timer_seconds: number | null;
+        };
+        Insert: {
+          id?: string;
+          recipe_id: string;
+          step_number: number;
+          text: string;
+          timer_seconds?: number | null;
+        };
+        Update: {
+          id?: string;
+          recipe_id?: string;
+          step_number?: number;
+          text?: string;
+          timer_seconds?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'recipe_steps_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipes';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      cooking_history: {
+        Row: {
+          id: string;
+          recipe_id: string;
+          cooked_by: string | null;
+          cooked_at: string;
+          servings_cooked: number | null;
+        };
+        Insert: {
+          id?: string;
+          recipe_id: string;
+          cooked_by?: string | null;
+          cooked_at?: string;
+          servings_cooked?: number | null;
+        };
+        Update: {
+          id?: string;
+          recipe_id?: string;
+          cooked_by?: string | null;
+          cooked_at?: string;
+          servings_cooked?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'cooking_history_recipe_id_fkey';
+            columns: ['recipe_id'];
+            isOneToOne: false;
+            referencedRelation: 'recipes';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'cooking_history_cooked_by_fkey';
+            columns: ['cooked_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
