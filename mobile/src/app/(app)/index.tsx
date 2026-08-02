@@ -8,9 +8,14 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { expirationStatus, isoDatePlusDays } from '@/lib/expiration';
+import { matchStatusColor, pantryMatchCount } from '@/lib/pantry-match';
 import { supabase } from '@/lib/supabase';
 
 const EXPIRING_WINDOW_DAYS = 7;
+// Below this pantry-match ratio a recipe isn't a realistic "cook tonight"
+// suggestion — you're still missing more than you have.
+const SUGGESTION_MATCH_THRESHOLD = 0.5;
+const MAX_SUGGESTIONS = 3;
 
 type ExpiringItem = {
   id: string;
@@ -20,11 +25,13 @@ type ExpiringItem = {
 };
 
 type ShoppingSnapshot = { count: number; preview: string[] };
+type RecipeSuggestion = { id: string; title: string; have: number; total: number };
 
 export default function HomeScreen() {
   const theme = useTheme();
   const [expiring, setExpiring] = useState<ExpiringItem[]>([]);
   const [shopping, setShopping] = useState<ShoppingSnapshot>({ count: 0, preview: [] });
+  const [suggestions, setSuggestions] = useState<RecipeSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchDashboard = useCallback(async () => {
@@ -52,9 +59,31 @@ export default function HomeScreen() {
       };
     })();
 
-    const [expiringRes, shoppingRes] = await Promise.all([expiringReq, shoppingReq]);
+    const suggestionsReq = (async (): Promise<RecipeSuggestion[]> => {
+      const [recipesRes, pantryRes] = await Promise.all([
+        supabase.from('recipes').select('id, title, recipe_ingredients(common_item_id)'),
+        supabase.from('pantry_items').select('common_item_id').not('common_item_id', 'is', null),
+      ]);
+      if (!recipesRes.data) return [];
+      const pantryIds = new Set(
+        (pantryRes.data as unknown as { common_item_id: string }[] | null)?.map((p) => p.common_item_id) ?? [],
+      );
+      const rows = recipesRes.data as unknown as {
+        id: string;
+        title: string;
+        recipe_ingredients: { common_item_id: string | null }[];
+      }[];
+      return rows
+        .map((row) => ({ id: row.id, title: row.title, ...pantryMatchCount(row.recipe_ingredients, pantryIds) }))
+        .filter((r) => r.total > 0 && r.have / r.total >= SUGGESTION_MATCH_THRESHOLD)
+        .sort((a, b) => b.have / b.total - a.have / a.total || a.title.localeCompare(b.title))
+        .slice(0, MAX_SUGGESTIONS);
+    })();
+
+    const [expiringRes, shoppingRes, suggestionsRes] = await Promise.all([expiringReq, shoppingReq, suggestionsReq]);
     if (expiringRes.data) setExpiring(expiringRes.data as unknown as ExpiringItem[]);
     setShopping(shoppingRes);
+    setSuggestions(suggestionsRes);
     setLoading(false);
   }, []);
 
@@ -125,6 +154,32 @@ export default function HomeScreen() {
                   </Pressable>
                 );
               })
+            )}
+          </View>
+
+          <View style={[styles.card, { backgroundColor: theme.backgroundElement, borderColor: theme.border }]}>
+            <ThemedText type="smallBold" themeColor="textSecondary" style={styles.cardTitle}>
+              RECIPE SUGGESTIONS
+            </ThemedText>
+            {suggestions.length === 0 ? (
+              <ThemedText type="small" themeColor="textSecondary">
+                Add recipes and stock your pantry to see what you can cook.
+              </ThemedText>
+            ) : (
+              suggestions.map((r) => (
+                <Pressable
+                  key={r.id}
+                  onPress={() => router.push(`/recipe/${r.id}` as Href)}
+                  style={({ pressed }) => [
+                    styles.cardRow,
+                    { borderBottomColor: theme.border, opacity: pressed ? 0.6 : 1 },
+                  ]}>
+                  <ThemedText type="default">{r.title}</ThemedText>
+                  <ThemedText type="small" themeColor={matchStatusColor(r.have, r.total)}>
+                    {r.have}/{r.total}
+                  </ThemedText>
+                </Pressable>
+              ))
             )}
           </View>
 

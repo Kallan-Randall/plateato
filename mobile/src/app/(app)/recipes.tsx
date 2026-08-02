@@ -8,7 +8,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Chip } from '@/components/ui/chip';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { pantryMatchCount } from '@/lib/pantry-match';
+import { matchStatusColor, pantryMatchCount } from '@/lib/pantry-match';
 import { supabase } from '@/lib/supabase';
 
 type RecipeRow = {
@@ -36,14 +36,6 @@ const SORT_OPTIONS: { mode: SortMode; label: string }[] = [
   { mode: 'recent', label: 'Recently used' },
   { mode: 'name', label: 'Name' },
 ];
-
-function matchColor(have: number, total: number): 'success' | 'warning' | 'textSecondary' {
-  if (total === 0) return 'textSecondary';
-  const pct = have / total;
-  if (pct >= 0.75) return 'success';
-  if (pct > 0) return 'warning';
-  return 'textSecondary';
-}
 
 export default function RecipesScreen() {
   const theme = useTheme();
@@ -207,7 +199,7 @@ export default function RecipesScreen() {
                     {item.title}
                   </ThemedText>
                   {item.total > 0 ? (
-                    <ThemedText type="smallBold" themeColor={matchColor(item.have, item.total)}>
+                    <ThemedText type="smallBold" themeColor={matchStatusColor(item.have, item.total)}>
                       {item.have}/{item.total}
                     </ThemedText>
                   ) : null}

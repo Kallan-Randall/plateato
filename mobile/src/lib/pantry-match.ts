@@ -20,6 +20,15 @@ export function pantryMatchCount(
   return { have, total };
 }
 
+/** Shared display color for a have/total match ratio (recipe cards, dashboard suggestions). */
+export function matchStatusColor(have: number, total: number): 'success' | 'warning' | 'textSecondary' {
+  if (total === 0) return 'textSecondary';
+  const pct = have / total;
+  if (pct >= 0.75) return 'success';
+  if (pct > 0) return 'warning';
+  return 'textSecondary';
+}
+
 export type UnitInfo = { id: string; dimension: string; to_base_factor: number };
 
 export type PantryStockRow = {
