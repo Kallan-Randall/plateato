@@ -186,7 +186,12 @@ export default function RecipesScreen() {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.primary} />
           }
           renderItem={({ item }) => (
-            <View style={[styles.card, { borderColor: theme.border, backgroundColor: theme.backgroundElement }]}>
+            <Pressable
+              onPress={() => router.push(`/recipe/${item.id}` as Href)}
+              style={({ pressed }) => [
+                styles.card,
+                { borderColor: theme.border, backgroundColor: theme.backgroundElement, opacity: pressed ? 0.85 : 1 },
+              ]}>
               {item.photo_url ? (
                 <Image source={{ uri: item.photo_url }} style={styles.photo} />
               ) : (
@@ -222,7 +227,7 @@ export default function RecipesScreen() {
                   </View>
                 ) : null}
               </View>
-            </View>
+            </Pressable>
           )}
           ListEmptyComponent={
             <View style={styles.empty}>
