@@ -30,8 +30,10 @@ export type CommonItemForMatching = {
   aliases: string[];
 };
 
-// Unicode vulgar fractions recipes commonly use, mapped to decimal.
-const VULGAR_FRACTIONS: Record<string, number> = {
+// Unicode vulgar fractions recipes commonly use, mapped to decimal. Exported
+// so display-side formatting (scaled quantities) can snap back to the same
+// glyphs instead of showing raw decimals.
+export const VULGAR_FRACTIONS: Record<string, number> = {
   '¼': 0.25,
   '½': 0.5,
   '¾': 0.75,

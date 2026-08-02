@@ -37,6 +37,7 @@ function RootNavigator() {
         <Stack.Screen name="add-item" options={{ presentation: 'modal' }} />
         <Stack.Screen name="edit-item" options={{ presentation: 'modal' }} />
         <Stack.Screen name="add-recipe" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="recipe/[id]" />
         <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
       </Stack.Protected>
     </Stack>
