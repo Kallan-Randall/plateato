@@ -1,5 +1,5 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
+import { type Href, router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -73,33 +73,43 @@ export default function RecipeDetailScreen() {
   const [addingMissing, setAddingMissing] = useState(false);
   const [addedCount, setAddedCount] = useState<number | null>(null);
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      const [recipeRes, ingredientsRes, stepsRes, commonItemsRes, pantryRes, unitsRes] = await Promise.all([
-        supabase.from('recipes').select('id, title, photo_url, servings, tags').eq('id', id).maybeSingle(),
-        supabase.from('recipe_ingredients').select('*').eq('recipe_id', id).order('sort_order'),
-        supabase.from('recipe_steps').select('*').eq('recipe_id', id).order('step_number'),
-        supabase.from('common_items').select('id, name, category_id'),
-        supabase.from('pantry_items').select('common_item_id, quantity, unit_id, tracking_mode'),
-        supabase.from('units').select('id, abbreviation, dimension, to_base_factor'),
-      ]);
-      if (!active) return;
+  // useFocusEffect (not a plain effect) so returning from Cooking Mode after
+  // "mark as cooked" re-reads pantry_items and shows the updated match state.
+  useFocusEffect(
+    useCallback(() => {
+      let active = true;
+      (async () => {
+        const [recipeRes, ingredientsRes, stepsRes, commonItemsRes, pantryRes, unitsRes] = await Promise.all([
+          supabase.from('recipes').select('id, title, photo_url, servings, tags').eq('id', id).maybeSingle(),
+          supabase.from('recipe_ingredients').select('*').eq('recipe_id', id).order('sort_order'),
+          supabase.from('recipe_steps').select('*').eq('recipe_id', id).order('step_number'),
+          supabase.from('common_items').select('id, name, category_id'),
+          supabase.from('pantry_items').select('common_item_id, quantity, unit_id, tracking_mode'),
+          supabase.from('units').select('id, abbreviation, dimension, to_base_factor'),
+        ]);
+        if (!active) return;
 
-      const recipeRow = recipeRes.data as unknown as Recipe | null;
-      setRecipe(recipeRow);
-      setTargetServings(recipeRow?.servings && recipeRow.servings > 0 ? recipeRow.servings : 1);
-      setIngredients((ingredientsRes.data as unknown as RecipeIngredient[]) ?? []);
-      setSteps((stepsRes.data as unknown as RecipeStep[]) ?? []);
-      setCommonItems((commonItemsRes.data as unknown as CommonItemLookup[]) ?? []);
-      setPantryRows((pantryRes.data as unknown as PantryStockRow[]) ?? []);
-      setUnits((unitsRes.data as unknown as DisplayUnit[]) ?? []);
-      setLoading(false);
-    })();
-    return () => {
-      active = false;
-    };
-  }, [id]);
+        const recipeRow = recipeRes.data as unknown as Recipe | null;
+        // Only seed the servings stepper on first load — a refocus (e.g.
+        // returning from Cooking Mode) shouldn't clobber the user's choice.
+        setRecipe((prev) => {
+          if (prev === null) {
+            setTargetServings(recipeRow?.servings && recipeRow.servings > 0 ? recipeRow.servings : 1);
+          }
+          return recipeRow;
+        });
+        setIngredients((ingredientsRes.data as unknown as RecipeIngredient[]) ?? []);
+        setSteps((stepsRes.data as unknown as RecipeStep[]) ?? []);
+        setCommonItems((commonItemsRes.data as unknown as CommonItemLookup[]) ?? []);
+        setPantryRows((pantryRes.data as unknown as PantryStockRow[]) ?? []);
+        setUnits((unitsRes.data as unknown as DisplayUnit[]) ?? []);
+        setLoading(false);
+      })();
+      return () => {
+        active = false;
+      };
+    }, [id]),
+  );
 
   const scaleFactor = recipe && recipe.servings > 0 ? targetServings / recipe.servings : 1;
 
@@ -238,6 +248,13 @@ export default function RecipeDetailScreen() {
               ) : null}
             </View>
           </View>
+
+          {steps.length > 0 ? (
+            <Button
+              title="Start cooking"
+              onPress={() => router.push(`/recipe/${id}/cook?servings=${targetServings}` as Href)}
+            />
+          ) : null}
 
           {summary.total > 0 ? (
             <View style={styles.field}>
