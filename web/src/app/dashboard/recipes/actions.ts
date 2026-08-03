@@ -106,3 +106,40 @@ export async function addMissingToShoppingList(items: MissingItemInput[]): Promi
   revalidatePath('/dashboard/shopping');
   return { error: null };
 }
+
+export type PantryAdjustment =
+  | { pantryRowId: string; mode: 'quantity'; newQuantity: number }
+  | { pantryRowId: string; mode: 'level'; newLevel: 'full' | 'half' | 'low' };
+
+export async function finishCooking(
+  recipeId: string,
+  servingsCooked: number,
+  adjustments: PantryAdjustment[],
+): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { userId } = await requireHouseholdId(supabase);
+
+  await Promise.all(
+    adjustments.map((adj) =>
+      adj.mode === 'level'
+        ? supabase
+            .from('pantry_items')
+            .update({ approximate_level: adj.newLevel, updated_by: userId })
+            .eq('id', adj.pantryRowId)
+        : supabase
+            .from('pantry_items')
+            .update({ quantity: adj.newQuantity, updated_by: userId })
+            .eq('id', adj.pantryRowId),
+    ),
+  );
+
+  const { error } = await supabase
+    .from('cooking_history')
+    .insert({ recipe_id: recipeId, cooked_by: userId, servings_cooked: servingsCooked });
+  if (error) return { error: error.message };
+
+  revalidatePath(`/dashboard/recipes/${recipeId}`);
+  revalidatePath('/dashboard/recipes');
+  revalidatePath('/dashboard/pantry');
+  return { error: null };
+}
