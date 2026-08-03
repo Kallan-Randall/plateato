@@ -9,6 +9,7 @@ import { signOut } from './actions';
 const navLinks = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/dashboard/pantry', label: 'Pantry' },
+  { href: '/dashboard/recipes', label: 'Recipes' },
   { href: '/dashboard/shopping', label: 'Shopping' },
   { href: '/dashboard/settings', label: 'Settings' },
 ];
