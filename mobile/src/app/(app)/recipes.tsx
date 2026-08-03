@@ -8,8 +8,8 @@ import { ThemedView } from '@/components/themed-view';
 import { Chip } from '@/components/ui/chip';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
-import { matchStatusColor, pantryMatchCount } from '@/lib/pantry-match';
 import { supabase } from '@/lib/supabase';
+import { matchStatusColor, pantryMatchCount } from '@plateato/core';
 
 type RecipeRow = {
   id: string;

@@ -8,8 +8,8 @@ import { ThemedView } from '@/components/themed-view';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { expirationStatus, isoDatePlusDays } from '@/lib/expiration';
-import { matchStatusColor, pantryMatchCount } from '@/lib/pantry-match';
 import { supabase } from '@/lib/supabase';
+import { matchStatusColor, pantryMatchCount } from '@plateato/core';
 
 const EXPIRING_WINDOW_DAYS = 7;
 // Below this pantry-match ratio a recipe isn't a realistic "cook tonight"

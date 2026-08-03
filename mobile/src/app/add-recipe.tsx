@@ -10,12 +10,8 @@ import { TextField } from '@/components/ui/text-field';
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import { useAuth } from '@/lib/auth';
-import {
-  type CommonItemForMatching,
-  type ParsedIngredient,
-  parseIngredientLine,
-} from '@/lib/ingredient-parser';
 import { supabase } from '@/lib/supabase';
+import { type CommonItemForMatching, type ParsedIngredient, parseIngredientLine } from '@plateato/core';
 
 let nextLineId = 0;
 const newLineId = () => `line-${nextLineId++}`;
