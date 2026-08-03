@@ -1,0 +1,73 @@
+'use server';
+
+import { redirect } from 'next/navigation';
+
+import { requireHouseholdId } from '@/lib/household';
+import { createClient } from '@/lib/supabase/server';
+
+export type IngredientInput = {
+  rawText: string;
+  parsedQuantity: number | null;
+  parsedUnitId: string | null;
+  commonItemId: string | null;
+  matchConfidence: 'high' | 'low' | 'unmatched';
+  prepNote: string | null;
+};
+
+export type StepInput = { text: string; timerSeconds: number | null };
+
+export type AddRecipeInput = {
+  title: string;
+  servings: number;
+  tags: string[];
+  ingredients: IngredientInput[];
+  steps: StepInput[];
+};
+
+export async function addRecipe(input: AddRecipeInput): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+  const { userId, householdId } = await requireHouseholdId(supabase);
+
+  const { data: recipe, error: recipeError } = await supabase
+    .from('recipes')
+    .insert({
+      household_id: householdId,
+      title: input.title,
+      servings: input.servings,
+      tags: input.tags,
+      created_by: userId,
+      updated_by: userId,
+    })
+    .select('id')
+    .single();
+  if (recipeError || !recipe) return { error: recipeError?.message ?? 'Could not save the recipe.' };
+
+  const ingredientRows = input.ingredients.map((ing, index) => ({
+    recipe_id: recipe.id,
+    sort_order: index,
+    raw_text: ing.rawText,
+    parsed_quantity: ing.parsedQuantity,
+    parsed_unit_id: ing.parsedUnitId,
+    common_item_id: ing.commonItemId,
+    match_confidence: ing.matchConfidence,
+    prep_note: ing.prepNote,
+  }));
+  const stepRows = input.steps.map((step, index) => ({
+    recipe_id: recipe.id,
+    step_number: index + 1,
+    text: step.text,
+    timer_seconds: step.timerSeconds,
+  }));
+
+  const [ingredientsRes, stepsRes] = await Promise.all([
+    ingredientRows.length
+      ? supabase.from('recipe_ingredients').insert(ingredientRows)
+      : Promise.resolve({ error: null }),
+    stepRows.length ? supabase.from('recipe_steps').insert(stepRows) : Promise.resolve({ error: null }),
+  ]);
+  if (ingredientsRes.error || stepsRes.error) {
+    return { error: ingredientsRes.error?.message ?? stepsRes.error?.message ?? 'Could not save recipe details.' };
+  }
+
+  redirect('/dashboard/recipes');
+}
