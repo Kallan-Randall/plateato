@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 import { requireHouseholdId } from '@/lib/household';
 import { createClient } from '@/lib/supabase/server';
@@ -70,4 +71,38 @@ export async function addRecipe(input: AddRecipeInput): Promise<{ error: string 
   }
 
   redirect('/dashboard/recipes');
+}
+
+export type MissingItemInput = {
+  commonItemId: string | null;
+  name: string;
+  categoryId: string | null;
+  quantity: number | null;
+  unitId: string | null;
+};
+
+export async function addMissingToShoppingList(items: MissingItemInput[]): Promise<{ error: string | null }> {
+  if (items.length === 0) return { error: null };
+
+  const supabase = await createClient();
+  const { userId } = await requireHouseholdId(supabase);
+
+  const { data: listId, error: listError } = await supabase.rpc('ensure_shopping_list');
+  if (listError || !listId) return { error: listError?.message ?? 'Could not find your shopping list' };
+
+  const { error } = await supabase.from('shopping_list_items').insert(
+    items.map((item) => ({
+      list_id: listId,
+      common_item_id: item.commonItemId,
+      name: item.name,
+      category_id: item.categoryId ?? 'other',
+      quantity: item.quantity,
+      unit_id: item.unitId,
+      added_by: userId,
+    })),
+  );
+  if (error) return { error: error.message };
+
+  revalidatePath('/dashboard/shopping');
+  return { error: null };
 }
